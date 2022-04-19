@@ -1,3 +1,4 @@
+using Dapr.Client;
 using Microsoft.AspNetCore.Mvc;
 
 namespace StateService.Controllers;
@@ -6,27 +7,29 @@ namespace StateService.Controllers;
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
 
     private readonly ILogger<WeatherForecastController> _logger;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    private readonly DaprClient _daprClient;
+    const string storeName = "statestore";
+    const string key = "LastWeatherForecast";
+
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, DaprClient daprClient)
     {
         _logger = logger;
+        _daprClient = daprClient;
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    public async Task<WeatherForecast> GetAsync()
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = DateTime.Now.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        })
-        .ToArray();
+        return await _daprClient.GetStateAsync<WeatherForecast>(storeName, key);
+    }
+
+    [HttpPost(Name = "PostWeatherForecast")]
+    public async Task PostAsync(WeatherForecast weatherForecast)
+    {
+        await _daprClient.SaveStateAsync(storeName, key, weatherForecast);
+        return;
     }
 }

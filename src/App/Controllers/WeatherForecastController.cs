@@ -11,6 +11,11 @@ public class WeatherForecastController : ControllerBase
 
     private readonly DaprClient _daprClient;
 
+    const string shareStore = "sharestore";
+    const string storeName = "statestore";
+    const string key = "LastWeatherForecast";
+
+
     public WeatherForecastController(ILogger<WeatherForecastController> logger, DaprClient daprClient)
     {
         _logger = logger;
@@ -20,9 +25,23 @@ public class WeatherForecastController : ControllerBase
     [HttpGet(Name = "GetWeatherForecast")]
     public async Task<IEnumerable<WeatherForecast>> GetAsync()
     {
-        IEnumerable<WeatherForecast>? forecastsA = await _daprClient.InvokeMethodAsync<IEnumerable<WeatherForecast>>(HttpMethod.Get, "service-a", "weatherforecast");
-        IEnumerable<WeatherForecast>? forecastsB = await _daprClient.InvokeMethodAsync<IEnumerable<WeatherForecast>>(HttpMethod.Get, "service-b", "weatherforecast");
+        WeatherForecast forcast = new WeatherForecast
+        {
+            TemperatureC = 1000,
+            Summary = "from App",
+            Date = DateTime.Now
+        };
 
-        return forecastsA.Concat(forecastsB).ToArray();
+        var username = "410e0136-f7d5-437f-a844-e40c0ce40e00";
+        await _daprClient.SaveStateAsync(shareStore, username, "from_users_data");
+
+        await _daprClient.SaveStateAsync(storeName, key, forcast);
+
+        WeatherForecast forcastFromApp = await _daprClient.GetStateAsync<WeatherForecast>(storeName, key);
+
+        WeatherForecast forcastFromService = await _daprClient.InvokeMethodAsync<WeatherForecast>(HttpMethod.Get, "state-service", "weatherforecast");
+
+        return new List<WeatherForecast>() { forcastFromApp, forcastFromService };
     }
+
 }
