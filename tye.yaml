@@ -30,12 +30,14 @@ services:
   project: src/ServiceB/ServiceB.csproj
 - name: app
   project: src/App/App.csproj
+- name: state-service
+  project: src/StateService/StateService.csproj
 
 # This may conflict with the redis instance that dapr manages.
 #
 # Doing a `docker ps` can show if its already running. If that's the case
-# then comment out out when running locally. 
+# then comment out out when running locally.
 # - name: redis
 #   image: redis
-#   bindings: 
+#   bindings:
 #   - port: 6379
