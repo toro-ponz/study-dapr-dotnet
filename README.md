@@ -20,3 +20,13 @@ Notice: Port is not fixed, see tye dashboard each run.
 ## Zipkin
 
 Access to http://localhost:9411.
+
+## RabbitMQ
+
+Run on docker.
+
+```shell
+docker run -d --hostname my-rabbit --name some-rabbit -p 5672:5672 -p 5673:5673 -p 15672:15672 rabbitmq:3-management
+```
+
+Access to http://localhost:15672.
