@@ -32,6 +32,8 @@ services:
   project: src/App/App.csproj
 - name: state-service
   project: src/StateService/StateService.csproj
+- name: worker-service
+  project: WorkerService/WorkerService.csproj
 
 # This may conflict with the redis instance that dapr manages.
 #
