@@ -1,0 +1,13 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: smtp
+  namespace: default
+spec:
+  type: bindings.smtp
+  version: v1
+  metadata:
+  - name: host
+    value: "127.0.0.1"
+  - name: port
+    value: "1025"

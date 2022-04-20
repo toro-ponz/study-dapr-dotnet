@@ -30,3 +30,13 @@ docker run -d --hostname my-rabbit --name some-rabbit -p 5672:5672 -p 5673:5673 
 ```
 
 Access to http://localhost:15672.
+
+## mailhog
+
+Run on docker.
+
+```shell
+docker run -d -p 8025:8025 -p 1025:1025 mailhog/mailhog
+```
+
+Access to http://localhost:8025.
